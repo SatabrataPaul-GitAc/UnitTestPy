@@ -1,79 +1,61 @@
-import java.io.*;
-import java.lang.*;
-public class crc
+import java.util.Scanner;
+class CRC
 {
-public static void main(String args[]) throws IOException
+public static void main(String args[])
 {
-int f[]=new int[25];
-int gen[]=new int[10];
-int rem[]=new int[10];
-int flen,glen,rlen,i,j;
-int p,sum,iframe,igen,irem;
-String data;
-BufferedReader in=new BufferedReader(new
-InputStreamReader(System.in));
-System.out.println("Enter the frame:");
-data=in.readLine();flen=data.length()-1;
-for(i=0;i<data.length();i++)
-f[i]=(int)(data.charAt(i))-48;
-System.out.println("Enter the generator:");
-data=in.readLine();
-glen=data.length()-1;
-for(i=1;i<=glen;i++)
-f[flen+i]=0;
-flen=flen+glen;
-for(i=0;i<data.length();i++)
-gen[i]=((int)(data.charAt(i))-48);
-p=0;
-sum=0;
-for(i=flen;i>=0;i--)
+Scanner sc=new Scanner(System.in);
+int m,g[],n,d[],z[],r[],msb,i,j,k;
+System.out.print(“Enter no. of data bits : “);
+n=sc.nextInt();
+System.out.print(“Enter no. of generator bits : “);
+m=sc.nextInt();
+d=new int[n+m];
+g=new int[m];
+System.out.print(“Enter data bits : “);
+for(i=0;i<n;i++)
+d[i]=sc.nextInt();
+System.out.print(“Enter generator bits : “);
+for(j=0;j<m;j++)
+g[j]=sc.nextInt();
+for(i=0;i<m-1;i++)
+d[n+i]=0;
+r=new int[m+n];
+for(i=0;i<m;i++)
+r[i]=d[i];
+z=new int[m];
+for(i=0;i<m;i++)
+z[i]=0;
+for(i=0;i<n;i++)
 {
-sum=sum+(f[i]*(int)Math.pow(2,p));
-p=p+1;
-}
-iframe=sum;
-p=0;
-sum=0;
-for(i=glen;i>=0;i--)
+k=0;
+msb=r[i];
+for(j=i;j<m+i;j++)
 {
-sum=sum+(gen[i]*(int)Math.pow(2,p));
-p=p+1;
-}
-igen=sum;
-irem=iframe%igen;
-irem=igen-irem;
-i=0;
-while(iframe>0)
-{
-f[i]=iframe%2;
-iframe=iframe/2;i++;
-}
-if(iframe == 1)
-f[i]=iframe;
-System.out.print("Transmitted string:");
-for(i=flen;i>=0;i--)
-System.out.print(f[i]);
-System.out.print("\n\nEnter the received
-string:");
-data=in.readLine();
-flen=data.length()-1;
-for(i=0;i<data.length();i++)
-f[i]=((int)(data.charAt(i)))-48;
-p=0;
-sum=0;
-for(i=flen;i>=0;i--)
-{
-p=p+1;
-}
-iframe=sum;
-irem=iframe%igen;
-if(irem==0)
-{
-System.out.println("Message received with no error");
-}
+if(msb==0)
+r[j]=xor(r[j],z[k]);
 else
-{
-System.out.println("Message received with error");
+r[j]=xor(r[j],g[k]);
+k++;
 }
+r[m+i]=d[m+i];
+}
+System.out.print(“The code bits added are : “);
+for(i=n;i<n+m-1;i++)
+{
+d[i]=r[i];
+System.out.print(d[i]);
+}
+System.out.print(“\nThe code data is : “);
+for(i=0;i<n+m-1;i++)
+{
+System.out.print(d[i]);
+}
+}
+public static int xor(int x,int y)
+{
+if(x==y)
+return(0);
+else
+return(1);
 }
 }
